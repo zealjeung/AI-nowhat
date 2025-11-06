@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Chat } from "@google/genai";
 import { NEWS_DATA } from '../constants';
 import type { NewsCategory, LLMRankingItem, GroundingSource } from '../types';
 
@@ -55,18 +55,20 @@ function extractSources(response: any): GroundingSource[] {
 }
 
 export async function fetchNewsData(): Promise<{ newsData: NewsCategory[], sources: GroundingSource[] }> {
+    // Remove the static 'item_ideas' to allow the model to find the latest trending news.
     const categoryInfo = NEWS_DATA.map(cat => ({
         id: cat.id,
         title: cat.title,
-        item_ideas: cat.items.map(item => item.title).join(', ')
     }));
 
+    // Update the prompt to be more explicit about fetching recent, trending news.
     const prompt = `
-      Generate a summary of the latest news and breakthroughs for the following tech categories.
-      For each category, provide a list of 5-7 key items with a concise, one-sentence description for each.
-      The information must be very recent, reflecting the current state of the industry.
+      Generate a summary of the latest, most significant news and breakthroughs for the following tech categories.
+      For each category, provide a list of 5-7 key items. Each item must have a concise, one-sentence description.
+      The information must be from the last few days to reflect the absolute current state of the industry.
+      Focus on trending topics, major announcements, and significant updates.
       The output must be a valid JSON array matching this structure: [{id: string, title: string, items: [{id: string, title: string, description: string}]}].
-      Use the provided IDs for categories and generate unique IDs for news items.
+      Use the provided IDs for categories and generate unique, descriptive IDs for each news item (e.g., 'openai-sora-2-release').
       
       Categories to populate:
       ${JSON.stringify(categoryInfo, null, 2)}
@@ -98,9 +100,11 @@ export async function fetchNewsData(): Promise<{ newsData: NewsCategory[], sourc
 }
 
 export async function fetchLLMRankings(): Promise<LLMRankingItem[]> {
+    // Update the prompt to fetch the most current rankings.
     const prompt = `
-      Provide a list of the top 10 Large Language Models (LLMs), including Grok, based on the latest performance benchmarks and community consensus.
-      For each model, include its rank, name, developer, and an overall score out of 100.
+      Provide a list of the top 10 Large Language Models (LLMs), including Grok, based on the very latest performance benchmarks (e.g., from leaderboards like LMSys Chatbot Arena) and recent community consensus.
+      The data should be as current as possible.
+      For each model, include its rank, name, developer, and an overall score out of 100 representing its general capability.
       The output must be a valid JSON array matching this structure: [{rank: number, name: string, developer: string, score: number}].
     `;
 
@@ -116,4 +120,30 @@ export async function fetchLLMRankings(): Promise<LLMRankingItem[]> {
     const jsonData = parseJsonResponse(response.text);
 
     return jsonData as LLMRankingItem[];
+}
+
+export function createChat(contextData: { newsData: NewsCategory[], rankingsData: LLMRankingItem[] }): Chat {
+    const contextString = JSON.stringify(contextData);
+    const systemInstruction = `
+        You are a highly intelligent AI assistant, powered by Gemini 2.5 Pro. Your name is "Briefing Bot".
+        You are embedded in a web app that displays a daily briefing on AI and technology.
+        Your primary goal is to act as an expert investigator for the user.
+        It is crucial that you follow user instructions precisely, especially regarding the length and format of your answers.
+        First, check if the answer can be found in the page's CONTEXT provided below.
+        If the information is not in the context or if the user asks for more details, use your ability to search the internet to find the most accurate and up-to-date information.
+        You are not limited to the on-page context. Be resourceful and provide comprehensive answers.
+        Do not use markdown in your responses.
+
+        CONTEXT:
+        ${contextString}
+    `;
+
+    const chat: Chat = ai.chats.create({
+        model: 'gemini-2.5-pro', // Upgraded model for better chat performance
+        config: {
+            systemInstruction: systemInstruction,
+            tools: [{ googleSearch: {} }],
+        },
+    });
+    return chat;
 }

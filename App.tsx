@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import type { NewsCategory, LLMRankingItem, GroundingSource } from './types';
 import { fetchNewsData, fetchLLMRankings } from './utils/gemini';
@@ -7,6 +8,7 @@ import LLMRankings from './components/LLMRankings';
 import Sources from './components/Sources';
 import LoadingSkeleton from './components/LoadingSkeleton';
 import ErrorDisplay from './components/ErrorDisplay';
+import ChatWidget from './components/ChatWidget';
 
 const App: React.FC = () => {
   const [newsData, setNewsData] = useState<NewsCategory[] | null>(null);
@@ -74,6 +76,7 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-slate-900 text-gray-200 font-sans">
       <Header onRefresh={handleRefresh} isLoading={isLoading} />
       {renderContent()}
+      <ChatWidget newsData={newsData} rankingsData={rankingsData} />
       <footer className="text-center py-6 text-slate-500 text-sm">
         <p>AI-generated daily briefing. Information may not be 100% accurate.</p>
       </footer>
