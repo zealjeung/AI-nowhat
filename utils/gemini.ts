@@ -64,7 +64,7 @@ export async function fetchNewsData(): Promise<{ newsData: NewsCategory[], sourc
     // Update the prompt to be more explicit about fetching recent, trending news.
     const prompt = `
       Generate a summary of the latest, most significant news and breakthroughs for the following tech categories.
-      For each category, provide a list of 5-7 key items. Each item must have a concise, one-sentence description and a relevant source URL.
+      For each category, provide a list of exactly 12 key items. This is a strict requirement. Each item must have a concise, one-sentence description and a relevant source URL.
       The information must be from the last few days to reflect the absolute current state of the industry.
       Focus on trending topics, major announcements, and significant updates.
       The output must be a valid JSON array matching this structure: [{id: string, title: string, items: [{id: string, title: string, description: string, url: string}]}].
