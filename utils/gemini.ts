@@ -1,6 +1,6 @@
 import { GoogleGenAI, Chat } from "@google/genai";
 import { NEWS_DATA } from '../constants';
-import type { NewsCategory, LLMRankingItem, GroundingSource } from '../types';
+import type { NewsCategory, LLMRankingItem, GroundingSource, NewsItem } from '../types';
 
 // Fix: Correctly initialize GoogleGenAI with the API key from environment variables.
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -64,10 +64,10 @@ export async function fetchNewsData(): Promise<{ newsData: NewsCategory[], sourc
     // Update the prompt to be more explicit about fetching recent, trending news.
     const prompt = `
       Generate a summary of the latest, most significant news and breakthroughs for the following tech categories.
-      For each category, provide a list of 5-7 key items. Each item must have a concise, one-sentence description.
+      For each category, provide a list of 5-7 key items. Each item must have a concise, one-sentence description and a relevant source URL.
       The information must be from the last few days to reflect the absolute current state of the industry.
       Focus on trending topics, major announcements, and significant updates.
-      The output must be a valid JSON array matching this structure: [{id: string, title: string, items: [{id: string, title: string, description: string}]}].
+      The output must be a valid JSON array matching this structure: [{id: string, title: string, items: [{id: string, title: string, description: string, url: string}]}].
       Use the provided IDs for categories and generate unique, descriptive IDs for each news item (e.g., 'openai-sora-2-release').
       
       Categories to populate:
@@ -88,9 +88,11 @@ export async function fetchNewsData(): Promise<{ newsData: NewsCategory[], sourc
     // Combine generated data with static data (like icons)
     const newsDataWithIcons: NewsCategory[] = jsonData.map((generatedCategory: any) => {
         const staticCategory = NEWS_DATA.find(c => c.id === generatedCategory.id);
+        const itemsWithUrl = (generatedCategory.items || []).filter((item: NewsItem) => item.url);
         return {
             ...generatedCategory,
             icon: staticCategory ? staticCategory.icon : undefined,
+            items: itemsWithUrl,
         };
     }).filter((cat: any): cat is NewsCategory => !!cat.icon); // Filter out any categories that couldn't be matched and ensure type correctness
 
