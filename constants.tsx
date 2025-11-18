@@ -6,6 +6,7 @@ export const NEWS_DATA: NewsCategory[] = [
     id: 'ai-models',
     title: 'AI Models & Platforms',
     icon: BrainIcon,
+    trendingTopics: [],
     items: [
       // Fix: Add missing 'url' property to conform to NewsItem type.
       { id: 'sora2', title: 'OpenAI Sora 2', description: 'A significant leap in video generation technology, creating highly realistic and imaginative scenes from text instructions.', url: '#' },
@@ -27,6 +28,7 @@ export const NEWS_DATA: NewsCategory[] = [
     id: 'robotics',
     title: 'Robotics & Physical AI',
     icon: RobotIcon,
+    trendingTopics: [],
     items: [
       // Fix: Add missing 'url' property to conform to NewsItem type.
       { id: 'neo', title: '1X Technologies NEO', description: 'Pre-orders opened for this humanoid robot designed for domestic tasks like dishwashing, watering plants, and carrying groceries.', url: '#' },
@@ -42,6 +44,7 @@ export const NEWS_DATA: NewsCategory[] = [
     id: 'hardware',
     title: 'Hardware & Quantum Computing',
     icon: ChipIcon,
+    trendingTopics: [],
     items: [
       // Fix: Add missing 'url' property to conform to NewsItem type.
       { id: 'willow', title: 'Google Willow Quantum Chip', description: 'Ran a "Quantum Echoes" algorithm in ~2 hours, a task that would take the world’s fastest supercomputer 3.2 years.', url: '#' },
@@ -63,6 +66,7 @@ export const NEWS_DATA: NewsCategory[] = [
     id: 'software',
     title: 'Software & Developer Tools',
     icon: CodeIcon,
+    trendingTopics: [],
     items: [
       // Fix: Add missing 'url' property to conform to NewsItem type.
       { id: 'ts-1', title: 'TypeScript #1 on GitHub', description: 'Surpassed other languages to become the most used language on GitHub, reflecting its popularity in modern web development.', url: '#' },
@@ -80,6 +84,7 @@ export const NEWS_DATA: NewsCategory[] = [
     id: 'industry',
     title: 'Industry & Business',
     icon: BriefcaseIcon,
+    trendingTopics: [],
     items: [
       // Fix: Add missing 'url' property to conform to NewsItem type.
       { id: '6g', title: 'Building AI-Powered 6G', description: 'NVIDIA and Nokia formed a strategic partnership to develop AI-native 6G networks, looking beyond the current 5G standard.', url: '#' },
@@ -93,6 +98,7 @@ export const NEWS_DATA: NewsCategory[] = [
     id: 'cybersecurity',
     title: 'Cybersecurity & Ethical Hacking',
     icon: ShieldIcon,
+    trendingTopics: [],
     items: [
       { id: 'black-hat-2025', title: 'Black Hat 2025 Highlights', description: 'Major vulnerabilities and exploits revealed at the leading security conference, shaping the future of digital defense.', url: '#' },
       { id: 'log4shell-2', title: 'Log4Shell 2.0 Emerges', description: 'A new critical vulnerability discovered in a widely used logging library, putting millions of systems at risk.', url: '#' },
@@ -105,6 +111,7 @@ export const NEWS_DATA: NewsCategory[] = [
     id: 'ai-frameworks',
     title: 'AI Frameworks & SDKs',
     icon: LayersIcon,
+    trendingTopics: [],
     items: [
       // Fix: Add missing 'url' property to conform to NewsItem type.
       { id: 'openai-sdk', title: 'OpenAI SDK', description: 'Latest updates on the official SDK for accessing OpenAI models like GPT-4.', url: '#' },

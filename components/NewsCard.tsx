@@ -5,15 +5,20 @@ import { ArrowUpRightIcon } from './icons';
 
 interface NewsCardProps {
   item: NewsItem;
+  index: number; // Add index for animation staggering
 }
 
-const NewsCard: React.FC<NewsCardProps> = ({ item }) => {
+const NewsCard: React.FC<NewsCardProps> = ({ item, index }) => {
+  // Stagger the animation for each card in a batch of 6
+  const animationDelay = `${(index % 6) * 100}ms`;
+
   return (
     <a
       href={item.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="block bg-slate-800/50 rounded-lg p-6 border border-slate-700/50 hover:border-cyan-400/50 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-cyan-500/10 group h-full"
+      className="block bg-slate-800/50 rounded-lg p-6 border border-slate-700/50 hover:border-cyan-400/50 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-cyan-500/10 group h-full animate-fadeInUp"
+      style={{ animationDelay, opacity: 0 }} // opacity 0 to prevent flash before animation
       aria-label={`Read more about ${item.title}`}
     >
       <div className="flex justify-between items-start gap-4">

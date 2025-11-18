@@ -24,13 +24,29 @@ const CategorySection: React.FC<CategorySectionProps> = ({ category }) => {
 
   return (
     <section>
-      <div className="flex items-center mb-6">
+      <div className="flex items-center mb-4">
         <Icon className="w-8 h-8 text-cyan-400 mr-4" />
         <h2 className="text-3xl font-bold text-white tracking-wide">{category.title}</h2>
       </div>
+      
+      {category.trendingTopics && category.trendingTopics.length > 0 && (
+        <div className="mb-6 flex flex-wrap items-center gap-2">
+            <h3 className="text-sm font-semibold text-slate-400 mr-2">Trending:</h3>
+            {category.trendingTopics.map((topic, index) => (
+                <span
+                    key={index}
+                    className="bg-slate-700/50 text-cyan-300 text-xs font-medium px-3 py-1 rounded-full border border-slate-600 animate-fadeInUp"
+                    style={{ animationDelay: `${index * 75}ms`, opacity: 0 }}
+                >
+                    {topic}
+                </span>
+            ))}
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {itemsToShow.map((item) => (
-          <NewsCard key={item.id} item={item} />
+        {itemsToShow.map((item, index) => (
+          <NewsCard key={item.id} item={item} index={index} />
         ))}
       </div>
       {hasMoreItems && (

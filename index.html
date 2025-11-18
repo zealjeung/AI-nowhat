@@ -14,6 +14,22 @@
           transform: translateX(100%);
         }
       }
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(1rem);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-fadeInUp {
+        animation-name: fadeInUp;
+        animation-duration: 0.5s;
+        animation-timing-function: ease-out;
+        animation-fill-mode: forwards;
+      }
     </style>
   <script type="importmap">
 {

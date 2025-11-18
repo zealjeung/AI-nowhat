@@ -12,6 +12,7 @@ export interface NewsCategory {
   title: string;
   icon: React.ComponentType<{ className?: string }>;
   items: NewsItem[];
+  trendingTopics: string[];
 }
 
 export interface LLMRankingItem {

@@ -16,9 +16,15 @@ const SkeletonCard = () => (
 
 const SkeletonCategory = () => (
   <section>
-    <div className="flex items-center mb-6">
+    <div className="flex items-center mb-4">
       <div className="w-8 h-8 bg-slate-700/50 rounded-md mr-4 animate-pulse"></div>
       <SkeletonBar width="w-1/3" height="h-8" />
+    </div>
+    <div className="mb-6 flex flex-wrap items-center gap-2">
+      <SkeletonBar width="w-16" height="h-5" />
+      <SkeletonBar width="w-24" height="h-5" />
+      <SkeletonBar width="w-20" height="h-5" />
+      <SkeletonBar width="w-28" height="h-5" />
     </div>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <SkeletonCard />
