@@ -1,10 +1,11 @@
+
 import type { NewsCategory } from './types';
-import { BrainIcon, RobotIcon, ChipIcon, CodeIcon, BriefcaseIcon, LayersIcon, ShieldIcon } from './components/icons';
+import { BrainIcon, RobotIcon, ChipIcon, CodeIcon, BriefcaseIcon, LayersIcon, ShieldIcon, GlobeIcon, SmartphoneIcon } from './components/icons';
 
 export const NEWS_DATA: NewsCategory[] = [
   {
     id: 'ai-models',
-    title: 'AI Models & Platforms',
+    title: 'AI Models, Frameworks & Tools',
     icon: BrainIcon,
     trendingTopics: [],
     items: [
@@ -21,7 +22,13 @@ export const NEWS_DATA: NewsCategory[] = [
       // Fix: Add missing 'url' property to conform to NewsItem type.
       { id: 'grokipedia', title: 'Grokipedia.com', description: 'A new encyclopedia built by xAI, Elon Musk’s AI company, aiming to provide unfiltered and comprehensive information.', url: '#' },
       // Fix: Add missing 'url' property to conform to NewsItem type.
-      { id: 'mico', title: 'Microsoft Copilot "Mico"', description: 'Microsoft announced 12 major updates to Copilot, including a new AI character called “Mico” and enhanced features across Windows, Edge, and Office.', url: '#' }
+      { id: 'mico', title: 'Microsoft Copilot "Mico"', description: 'Microsoft announced 12 major updates to Copilot, including a new AI character called “Mico” and enhanced features across Windows, Edge, and Office.', url: '#' },
+      // Merged Frameworks & SDKs items
+      { id: 'openai-sdk', title: 'OpenAI SDK', description: 'Latest updates on the official SDK for accessing OpenAI models like GPT-4.', url: '#' },
+      { id: 'mcp', title: 'Microsoft Copilot (MCP)', description: 'News regarding the platform, integrations, and development tools for Microsoft Copilot.', url: '#' },
+      { id: 'autogen', title: 'AutoGen', description: 'Updates on Microsoft\'s framework for building applications with multiple collaborating AI agents.', url: '#' },
+      { id: 'langgraph', title: 'LangGraph', description: 'The latest developments for this library that extends LangChain for building stateful, multi-agent applications.', url: '#' },
+      { id: 'crewai', title: 'CrewAI', description: 'Recent news and features for this framework focused on orchestrating autonomous AI agents.', url: '#' },
     ],
   },
   {
@@ -39,6 +46,18 @@ export const NEWS_DATA: NewsCategory[] = [
       // Fix: Add missing 'url' property to conform to NewsItem type.
       { id: 'newton', title: 'Newton Physics Engine', description: 'A collaboration between Disney, Nvidia, and Google DeepMind to create a GPU-accelerated physics engine for training robots in complex simulations.', url: '#' },
     ],
+  },
+  {
+    id: 'science-space',
+    title: 'Science & Space',
+    icon: GlobeIcon,
+    trendingTopics: [],
+    items: [
+      { id: 'spacex-starship', title: 'SpaceX Starship Update', description: 'The latest test flight results and future milestones for the massive Starship rocket aimed at Mars colonization.', url: '#' },
+      { id: 'nuclear-fusion', title: 'Nuclear Fusion Breakthrough', description: 'Scientists achieve new record in energy output, bringing commercial fusion power one step closer to reality.', url: '#' },
+      { id: 'crispr-therapy', title: 'New CRISPR Therapy Approved', description: 'FDA approves a new gene-editing therapy for treating rare genetic blood disorders.', url: '#' },
+      { id: 'james-webb', title: 'James Webb Telescope Discovery', description: 'New images from JWST reveal potential biosignatures on a distant exoplanet.', url: '#' }
+    ]
   },
   {
     id: 'hardware',
@@ -81,6 +100,18 @@ export const NEWS_DATA: NewsCategory[] = [
     ],
   },
   {
+    id: 'consumer-tech',
+    title: 'Consumer Tech & Gadgets',
+    icon: SmartphoneIcon,
+    trendingTopics: [],
+    items: [
+        { id: 'iphone-flip', title: 'Apple Foldable iPhone Rumors', description: 'Leaks suggest Apple is finalizing designs for a foldable iPhone to be released in late 2026.', url: '#' },
+        { id: 'samsung-s25', title: 'Samsung Galaxy S25 Leak', description: 'Early renders show a major design overhaul and new AI-integrated camera features.', url: '#' },
+        { id: 'smart-glasses-meta', title: 'Next-Gen Meta Ray-Bans', description: 'Features include a heads-up display and improved AI assistant integration for real-time translation.', url: '#' },
+        { id: 'steam-deck-2', title: 'Valve Steam Deck 2 News', description: 'Valve hints at better battery life and screen technology in the upcoming iteration of their handheld console.', url: '#' }
+    ]
+  },
+  {
     id: 'industry',
     title: 'Industry & Business',
     icon: BriefcaseIcon,
@@ -105,24 +136,6 @@ export const NEWS_DATA: NewsCategory[] = [
       { id: 'ai-phishing', title: 'AI-Powered Phishing Attacks', description: 'Sophisticated phishing campaigns are using generative AI to create highly convincing and personalized lures.', url: '#' },
       { id: 'raas-trends', title: 'Rise of Ransomware-as-a-Service', description: 'New trends and major players in the RaaS ecosystem, making sophisticated attacks more accessible.', url: '#' },
       { id: 'nation-state-espionage', title: 'Nation-State Cyber Espionage', description: 'Reports on recent cyber-espionage campaigns targeting critical infrastructure and government agencies.', url: '#' },
-    ]
-  },
-  {
-    id: 'ai-frameworks',
-    title: 'AI Frameworks & SDKs',
-    icon: LayersIcon,
-    trendingTopics: [],
-    items: [
-      // Fix: Add missing 'url' property to conform to NewsItem type.
-      { id: 'openai-sdk', title: 'OpenAI SDK', description: 'Latest updates on the official SDK for accessing OpenAI models like GPT-4.', url: '#' },
-      // Fix: Add missing 'url' property to conform to NewsItem type.
-      { id: 'mcp', title: 'Microsoft Copilot (MCP)', description: 'News regarding the platform, integrations, and development tools for Microsoft Copilot.', url: '#' },
-      // Fix: Add missing 'url' property to conform to NewsItem type.
-      { id: 'autogen', title: 'AutoGen', description: 'Updates on Microsoft\'s framework for building applications with multiple collaborating AI agents.', url: '#' },
-      // Fix: Add missing 'url' property to conform to NewsItem type.
-      { id: 'langgraph', title: 'LangGraph', description: 'The latest developments for this library that extends LangChain for building stateful, multi-agent applications.', url: '#' },
-      // Fix: Add missing 'url' property to conform to NewsItem type.
-      { id: 'crewai', title: 'CrewAI', description: 'Recent news and features for this framework focused on orchestrating autonomous AI agents.', url: '#' },
     ]
   }
 ];
