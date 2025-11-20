@@ -16,7 +16,8 @@ const model = "gemini-2.5-flash";
 function parseJsonResponse(text: string): any {
     const sanitizedText = text.trim();
     // The model may return JSON in a markdown code block.
-    const jsonMatch = sanitizedText.match(/```(?:json)?\n([\s\S]*?)\n```/);
+    // Updated regex to be more robust with whitespace handling
+    const jsonMatch = sanitizedText.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
     if (jsonMatch && jsonMatch[1]) {
         try {
             return JSON.parse(jsonMatch[1]);
@@ -56,53 +57,82 @@ function extractSources(response: any): GroundingSource[] {
 }
 
 export async function fetchNewsData(): Promise<{ newsData: NewsCategory[], sources: GroundingSource[] }> {
-    // Remove the static 'item_ideas' to allow the model to find the latest trending news.
-    const categoryInfo = NEWS_DATA.map(cat => ({
-        id: cat.id,
-        title: cat.title,
-    }));
+    // Fetch each category in parallel to ensure reliability and prevent token limits/timeouts
+    // that cause invalid JSON responses when fetching everything at once.
+    const categoryPromises = NEWS_DATA.map(async (category) => {
+        const prompt = `
+            Generate a summary of the latest, most significant news and breakthroughs for the tech category: "${category.title}" (ID: ${category.id}).
 
-    // Update the prompt to be more explicit about fetching recent, trending news.
-    // Reduced item count to 6 to prevent context limit issues and timeouts, ensuring all categories are returned.
-    const prompt = `
-      Generate a summary of the latest, most significant news and breakthroughs for the following tech categories.
-      For each category, provide a list of exactly 6 key items. This is a strict requirement. Each item must have a concise, one-sentence description and a relevant source URL.
-      Also, for each category, provide a list of 4-6 trending topics or keywords that are currently buzzing in that area (e.g., "Generative Video", "RAG", "LLM Agents").
-      The information must be from the last few days to reflect the absolute current state of the industry.
-      Focus on trending topics, major announcements, and significant updates.
-      Do not skip any categories.
-      The output must be a valid JSON array matching this structure: [{id: string, title: string, trendingTopics: string[], items: [{id: string, title: string, description: string, url: string}]}].
-      Use the provided IDs for categories and generate unique, descriptive IDs for each news item (e.g., 'openai-sora-2-release').
-      
-      Categories to populate:
-      ${JSON.stringify(categoryInfo, null, 2)}
-    `;
+            Requirements:
+            1. Provide exactly 5 key news items.
+            2. Each item must have a concise, one-sentence description and a relevant source URL.
+            3. Provide 4-6 trending topics/keywords for this category.
+            4. Focus on news from the last 7 days.
+            
+            Output JSON format:
+            {
+                "id": "${category.id}",
+                "trendingTopics": ["topic1", "topic2"],
+                "items": [
+                    {
+                        "id": "unique-id-1",
+                        "title": "News Title",
+                        "description": "Short description.",
+                        "url": "https://source.url"
+                    }
+                ]
+            }
+        `;
 
-    // Fix: Use generateContent with googleSearch tool for up-to-date information.
-    const response = await ai.models.generateContent({
-        model: model,
-        contents: prompt,
-        config: {
-            tools: [{ googleSearch: {} }],
-        },
+        try {
+            const response = await ai.models.generateContent({
+                model: model,
+                contents: prompt,
+                config: {
+                    tools: [{ googleSearch: {} }],
+                },
+            });
+
+            const data = parseJsonResponse(response.text);
+            const sources = extractSources(response);
+
+            // Validate and sanitize structure
+            const items = Array.isArray(data.items) ? data.items.map((item: any) => ({
+                id: item.id || Math.random().toString(36).substring(7),
+                title: item.title || 'Untitled',
+                description: item.description || '',
+                url: item.url || '#'
+            })) : [];
+
+            return {
+                category: {
+                    ...category,
+                    trendingTopics: Array.isArray(data.trendingTopics) ? data.trendingTopics : [],
+                    items: items,
+                },
+                sources: sources
+            };
+        } catch (error) {
+            console.error(`Error fetching category ${category.title}:`, error);
+            // Return the static category data as fallback so the app doesn't crash
+            return {
+                category: { ...category, items: [], trendingTopics: [] },
+                sources: []
+            };
+        }
     });
 
-    const jsonData = parseJsonResponse(response.text);
+    const results = await Promise.all(categoryPromises);
 
-    // Combine generated data with static data (like icons)
-    const newsDataWithIcons: NewsCategory[] = jsonData.map((generatedCategory: any) => {
-        const staticCategory = NEWS_DATA.find(c => c.id === generatedCategory.id);
-        const itemsWithUrl = (generatedCategory.items || []).filter((item: NewsItem) => item.url);
-        return {
-            ...generatedCategory,
-            icon: staticCategory ? staticCategory.icon : undefined,
-            items: itemsWithUrl,
-        };
-    }).filter((cat: any): cat is NewsCategory => !!cat.icon); // Filter out any categories that couldn't be matched and ensure type correctness
+    const newsData = results.map(r => r.category);
+    
+    // Aggregate and deduplicate sources
+    const allSources = results.flatMap(r => r.sources);
+    const uniqueSourcesMap = new Map();
+    allSources.forEach(s => uniqueSourcesMap.set(s.uri, s));
+    const uniqueSources = Array.from(uniqueSourcesMap.values());
 
-    const sources = extractSources(response);
-
-    return { newsData: newsDataWithIcons, sources };
+    return { newsData, sources: uniqueSources };
 }
 
 export async function fetchLLMRankings(): Promise<LLMRankingItem[]> {
@@ -114,18 +144,22 @@ export async function fetchLLMRankings(): Promise<LLMRankingItem[]> {
       The output must be a valid JSON array matching this structure: [{rank: number, name: string, developer: string, score: number}].
     `;
 
-    // Fix: Use generateContent with googleSearch tool for up-to-date information.
-    const response = await ai.models.generateContent({
-        model: model,
-        contents: prompt,
-        config: {
-            tools: [{ googleSearch: {} }],
-        },
-    });
+    try {
+        // Fix: Use generateContent with googleSearch tool for up-to-date information.
+        const response = await ai.models.generateContent({
+            model: model,
+            contents: prompt,
+            config: {
+                tools: [{ googleSearch: {} }],
+            },
+        });
 
-    const jsonData = parseJsonResponse(response.text);
-
-    return jsonData as LLMRankingItem[];
+        const jsonData = parseJsonResponse(response.text);
+        return jsonData as LLMRankingItem[];
+    } catch (error) {
+        console.error("Failed to fetch LLM rankings:", error);
+        return [];
+    }
 }
 
 export function createChat(contextData: { newsData: NewsCategory[], rankingsData: LLMRankingItem[] }): Chat {
